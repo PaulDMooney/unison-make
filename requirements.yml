@@ -1,0 +1,4 @@
+# Place your remote Ansible Galaxy role references here
+# Install Nginx role
+#- src: geerlingguy.nginx
+#- src: bennojoy.ntp

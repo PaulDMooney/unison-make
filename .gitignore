@@ -1,0 +1,5 @@
+# Ignore all folders that start with .
+.*/
+
+# Ignore Ansible retry files
+*.retry

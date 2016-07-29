@@ -1,0 +1,5 @@
+[control]
+localhost ansible_connection=local
+
+[unison-server]
+unison-server1 ansible_ssh_host=192.168.56.211 ansible_ssh_port=22 ansible_ssh_user=vagrant ansible_ssh_pass=vagrant

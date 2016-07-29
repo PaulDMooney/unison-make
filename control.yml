@@ -1,0 +1,46 @@
+---
+  # Optional boolean argument 'load_secrets' can be passed in command line to populate private keys. Requires a password. Eg `ansible-playbook control.yml -e load_secrets=true --ask-vault-pas`
+  - hosts: localhost
+    become: true
+    vars:
+      load_secret_vars: "{{ load_secrets is defined and load_secrets | bool }}"
+      private_keys_folder: /home/vagrant/private_keys
+
+    tasks:
+      - name: set default to vagrant directory on login
+        lineinfile:
+          dest=/home/vagrant/.bashrc
+          insertafter=EOF
+          line='cd /vagrant'
+
+      - name: packages
+        apt: name={{ item }} state=present update_cache=true
+        with_items:
+          - sshpass
+
+      - name: install Ansible Galaxy roles from requirements.yml
+        command: ansible-galaxy install -r requirements.yml --ignore-error
+        register: galaxy_install_output
+        changed_when: galaxy_install_output.stdout.find('installed successfully') != -1
+        ignore_errors: yes
+        failed_when: galaxy_install_output.rc != 0 and not 'No roles found' in galaxy_install_output.stderr
+
+      - debug: var=galaxy_install_output verbosity=2
+      - block:
+        - name: create keys folder
+          file: path={{ private_keys_folder }} state=directory
+
+        - include_vars: "keys/secrets.yml"
+          no_log: true
+
+        - name: Create private key
+          copy:
+            dest="{{ private_keys_folder }}/{{ private_key.key_file }}"
+            content="{{ private_key.content }}"
+            mode="0400"
+            owner="vagrant"
+            group="vagrant"
+
+        when: load_secret_vars
+
+

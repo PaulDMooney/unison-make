@@ -1,0 +1,7 @@
+root=c:\dev\training
+root=ssh://vagrant@192.168.56.211//home/vagrant
+
+path=unison
+ignore=BelowPath .vagrant
+
+repeat=watch

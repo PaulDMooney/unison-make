@@ -1,0 +1,47 @@
+---
+  - hosts: unison-server
+    become: true
+    tasks:
+      - apt_repository: repo='ppa:eugenesan/ppa'
+      - name: install packages
+        apt: name={{item}}
+             state=present
+             update_cache=yes
+             cache_valid_time=3600
+        with_items:
+          - git
+          - ocaml
+          - emacs
+          # - unison
+
+  - hosts: unison-server
+    vars:
+      unison_src: /home/vagrant/unison_src
+    tasks:
+      - name: checkout unison from github
+        git: repo=https://github.com/bcpierce00/unison.git
+          dest={{unison_src}}
+          version=2.48.3
+          force=yes
+      - name: replace revision variable
+        lineinfile: 'name={{ unison_src }}/src/mkProjectInfo.ml
+                    regexp="^let revisionString"
+                    line="let revisionString = \"$Rev: 388$\";;"
+                    state=present'
+      - name: make unison
+        make: chdir={{unison_src}} params="UISTYLE=text"
+  - hosts: unison-server
+    become: true
+    vars:
+      unison_src: /home/vagrant/unison_src
+    tasks:
+      - name: stat unison
+        stat: path={{unison_src}}/src/unison
+        register: unison_stat
+# move unison executable to /usr/local/bin if it exists
+      - block:
+        - name: move unison executable
+          command: mv {{ unison_src }}/src/unison /usr/local/bin
+        - name: move unison-fsmonitor executable
+          command: mv {{ unison_src }}/src/unison-fsmonitor /usr/local/bin
+        when: unison_stat.stat.exists
