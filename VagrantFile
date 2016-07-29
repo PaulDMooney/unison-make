@@ -7,7 +7,7 @@ Vagrant.configure(2) do |config|
   # Ansible Control Machine definition.
   # This example Control Machine uses a base box which comes pre-installed with Ansible, and uses ansible_local provisioning.
   # Vagrant 1.8.4 or later required.
-  config.vm.define "ansible-control-machine" do |control|
+  config.vm.define "control" do |control|
     control.vm.box = "comiq/ansiblebox"
 
     control.vm.network "private_network", ip: "192.168.56.210"
@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.define "unison_server" do |us|
+  config.vm.define "unison" do |us|
     us.vm.box = "ubuntu/trusty64"
 
     us.vm.network "private_network", ip: "192.168.56.211"

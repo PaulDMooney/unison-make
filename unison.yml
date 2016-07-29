@@ -2,7 +2,6 @@
   - hosts: unison-server
     become: true
     tasks:
-      - apt_repository: repo='ppa:eugenesan/ppa'
       - name: install packages
         apt: name={{item}}
              state=present
@@ -12,7 +11,6 @@
           - git
           - ocaml
           - emacs
-          # - unison
 
   - hosts: unison-server
     vars:
