@@ -11,6 +11,7 @@ To get the unison-fsmonitor, unison has to be compiled from source, which includ
 1. Update this documentation to become more relevant for this project.
 1. Break out unison-make role into it's own repository, and have it installed via requirements.yml
 1. Evolve unison.yml playbook into a dev machine playbook, and/or move to or rename repo something more relevant to setting up a development server.
+1. Add latest vagrant and virtual machine installation to playbook
 
 ## Prerequisites
 1. Virtualbox
