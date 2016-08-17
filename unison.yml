@@ -1,6 +1,11 @@
 ---
   - hosts: unison-server
     pre_tasks:
-      - apt: update_cache=yes cache_valid_time=3600
+      - block:
+        - apt_repository: repo='ppa:git-core/ppa' update_cache=yes
+        - name: install latest git
+          apt: name=git state=latest update_cache=yes cache_valid_time=3600
+        become: true
     roles:
       - unison-make
+
