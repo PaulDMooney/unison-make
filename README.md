@@ -19,7 +19,7 @@ To get the unison-fsmonitor, unison has to be compiled from source, which includ
 ## Getting Started
 1. Run `vagrant up`
 1. Run `vagrant ssh control`
-1. Optional: Run `ansible-playbook -i hosts/local control.yml -e load_secrets=true --ask-vault-pass=true` and the password is `password`
+1. Optional: Run `ansible-playbook -i hosts/local control.yml -e load_secrets=true --ask-vault-pass` and the password is `password`
 1. Run `ansible-playbook -i hosts/local unison.yml`
 
 ## Testing

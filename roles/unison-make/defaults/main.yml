@@ -1,0 +1,5 @@
+---
+# defaults file for unison-make
+unison_version: 2.48.3
+unison_checkout_folder: "{{ ansible_user_dir }}/unison_src_{{ unison_version }}"
+unison_binary_destination_folder: /usr/local/bin

@@ -1,0 +1,42 @@
+---
+# tasks file for unison-make
+- name: install packages
+  become: true
+  apt: name={{item}}
+        state=present
+        update_cache=yes
+  with_items:
+    - git
+    - ocaml
+    - emacs
+
+- name: stat unison binary at destination
+  stat: path={{ unison_binary_destination_folder }}/unison
+  register: unison_binary_stat
+- name: stat unison-fsmonitor at destination
+  stat: path={{ unison_binary_destination_folder}}/unison-fsmonitor
+  register: unison_fsmonitor_binary_stat
+- block:
+  - name: checkout unison from github
+    git: repo=https://github.com/bcpierce00/unison.git
+      dest={{ unison_checkout_folder }}
+      version={{ unison_version }}
+      force=yes
+  - name: replace revision variable
+    lineinfile: 'name={{ unison_checkout_folder }}/src/mkProjectInfo.ml
+                regexp="^let revisionString"
+                line="let revisionString = \"$Rev: 388$\";;"
+                state=present'
+  - name: make unison
+    make: chdir={{ unison_checkout_folder }} params="UISTYLE=text"
+
+# move unison executable to {{ unison_binary_destination_folder }} if it exists
+  - block:
+    - name: copy unison executable
+      command: cp {{ unison_checkout_folder }}/src/unison {{ unison_binary_destination_folder }}
+    - name: copy unison-fsmonitor executable
+      command: cp {{ unison_checkout_folder }}/src/unison-fsmonitor {{ unison_binary_destination_folder }}
+    become: true
+  when: not (unison_binary_stat.stat.exists and unison_fsmonitor_binary_stat.stat.exists)
+- name: remove {{ unison_checkout_folder }}
+  file: name={{ unison_checkout_folder }} state=absent
